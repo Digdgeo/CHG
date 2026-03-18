@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAI — Floating Algae Index</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#1a1a1a;padding:24px;max-width:820px;margin:0 auto}
+@media(prefers-color-scheme:dark){body{background:#1a1a1a;color:#e5e5e5}}
+h1{font-size:17px;font-weight:500;margin-bottom:2px}
+.subtitle{font-size:12px;color:#888;margin-bottom:18px}
+.controls{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:16px;align-items:flex-end}
+.ctrl{display:flex;flex-direction:column;gap:4px;font-size:12px;color:#666}
+@media(prefers-color-scheme:dark){.ctrl{color:#aaa}}
+.ctrl label{font-size:11px}
+.ctrl input[type=range]{width:130px;accent-color:#9333ea}
+.val{font-weight:500;color:#1a1a1a;font-size:12px}
+@media(prefers-color-scheme:dark){.val{color:#e5e5e5}}
+.fai-box{padding:10px 16px;border-radius:8px;border:1px solid #e5e5e5;background:#f9f9f9;font-size:13px;margin-bottom:12px;display:flex;gap:24px;flex-wrap:wrap;align-items:center}
+@media(prefers-color-scheme:dark){.fai-box{border-color:#333;background:#222}}
+.fai-num{font-size:22px;font-weight:500}
+.fai-interp{font-size:12px;color:#666;max-width:340px;line-height:1.5}
+@media(prefers-color-scheme:dark){.fai-interp{color:#aaa}}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:11px;color:#888;margin-top:8px}
+.li{display:flex;align-items:center;gap:5px}
+.info{margin-top:14px;padding:10px 14px;border-radius:8px;border:1px solid #e5e5e5;font-size:12px;color:#666;line-height:1.7}
+@media(prefers-color-scheme:dark){.info{border-color:#333;color:#aaa}}
+.info strong{color:#1a1a1a}
+@media(prefers-color-scheme:dark){.info strong{color:#e5e5e5}}
+footer{margin-top:20px;font-size:11px;color:#bbb;padding-top:12px;border-top:1px solid #eee}
+@media(prefers-color-scheme:dark){footer{border-color:#333;color:#555}}
+</style>
+</head>
+<body>
+<h1>FAI — Floating Algae Index (Hu et al. 2009)</h1>
+<p class="subtitle">Visualizador interactivo · Sentinel-2 MSI · FAI = R_rc(NIR) − R_rc'(NIR)</p>
+
+<div class="fai-box">
+  <div>
+    <div style="font-size:11px;color:#888;margin-bottom:2px">FAI calculado</div>
+    <div class="fai-num" id="fai-val">—</div>
+  </div>
+  <div class="fai-interp" id="fai-interp">Mueve los controles para ver cómo cambia el FAI</div>
+</div>
+
+<div class="controls">
+  <div class="ctrl">
+    <label>R_rc(Rojo) — B4 665 nm</label>
+    <input type="range" id="r-red" min="0.01" max="0.25" step="0.01" value="0.05">
+    <span class="val" id="v-red">0.05</span>
+  </div>
+  <div class="ctrl">
+    <label>R_rc(NIR) — B8 865 nm</label>
+    <input type="range" id="r-nir" min="0.01" max="0.35" step="0.01" value="0.12">
+    <span class="val" id="v-nir">0.12</span>
+  </div>
+  <div class="ctrl">
+    <label>R_rc(SWIR) — B11 1610 nm</label>
+    <input type="range" id="r-swir" min="0.01" max="0.25" step="0.01" value="0.04">
+    <span class="val" id="v-swir">0.04</span>
+  </div>
+</div>
+
+<svg id="chart" width="100%" viewBox="0 0 640 320" style="display:block"></svg>
+
+<div class="legend">
+  <div class="li"><svg width="28" height="8"><line x1="0" y1="4" x2="28" y2="4" stroke="#9333ea" stroke-width="2"/></svg>Espectro real medido</div>
+  <div class="li"><svg width="28" height="8"><line x1="0" y1="4" x2="28" y2="4" stroke="#ea580c" stroke-width="1.5" stroke-dasharray="4 3"/></svg>Línea base R_rc'(NIR) — lo esperado sin algas</div>
+  <div class="li"><svg width="28" height="8"><line x1="0" y1="4" x2="28" y2="4" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="2 2"/></svg>FAI = distancia entre ambas en el NIR</div>
+  <div class="li"><svg width="14" height="14"><circle cx="7" cy="7" r="5" fill="#9333ea"/></svg>Puntos medidos (Rojo, NIR, SWIR)</div>
+  <div class="li"><svg width="14" height="14"><circle cx="7" cy="7" r="5" fill="none" stroke="#ea580c" stroke-width="1.5" stroke-dasharray="2 2"/></svg>R_rc'(NIR) interpolado</div>
+</div>
+
+<div class="info">
+  <strong>¿Por qué no basta con mirar el NIR solo?</strong><br>
+  Un valor alto de NIR puede deberse a sedimentos, espuma, aerosoles o sun glint — todos suben la curva espectral de forma uniforme.
+  Las algas crean un <em>pico específico en el NIR</em> sin afectar igual al rojo ni al SWIR.
+  La línea base descarta las subidas uniformes y aísla ese pico. Es el mismo principio que el NDVI.<br><br>
+  <strong>La fórmula completa:</strong><br>
+  R_rc'(NIR) = R_rc(red) + [R_rc(SWIR) − R_rc(red)] × (λ_NIR − λ_red) / (λ_SWIR − λ_red)<br>
+  donde λ_NIR=865nm, λ_red=665nm, λ_SWIR=1610nm → factor = (865−665)/(1610−665) ≈ <strong>0.212</strong>
+</div>
+
+<footer>
+  Referencia: Hu, C. (2009). A novel ocean color index to detect floating algae in the global oceans.
+  Remote Sensing of Environment, 113(10), 2118–2129. · Sentinel-2 MSI Band Guide, ESA.
+</footer>
+
+<script>
+const PAD={l:54,r:30,t:28,b:48};
+const W=640,H=320;
+const CW=W-PAD.l-PAD.r, CH=H-PAD.t-PAD.b;
+const lambdas={red:665,nir:865,swir:1610};
+const xMin=550,xMax=1700;
+const NS='http://www.w3.org/2000/svg';
+
+function p(lam){return PAD.l+((lam-xMin)/(xMax-xMin))*CW}
+function yPx(r,yMin,yMax){return PAD.t+CH-(r-yMin)/(yMax-yMin)*CH}
+function el(tag,attrs){const e=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(attrs))e.setAttribute(k,v);return e}
+function txt(content,attrs){const t=el('text',{...attrs,'font-family':'system-ui,sans-serif'});t.textContent=content;return t}
+
+const isDark=()=>matchMedia('(prefers-color-scheme:dark)').matches;
+function clr(light,dark){return isDark()?dark:light}
+
+function catmull(pts){
+  let d=`M${pts[0][0]},${pts[0][1]}`;
+  for(let i=0;i<pts.length-1;i++){
+    const p0=pts[Math.max(i-1,0)],p1=pts[i],p2=pts[i+1],p3=pts[Math.min(i+2,pts.length-1)];
+    const cp1x=p1[0]+(p2[0]-p0[0])/6,cp1y=p1[1]+(p2[1]-p0[1])/6;
+    const cp2x=p2[0]-(p3[0]-p1[0])/6,cp2y=p2[1]-(p3[1]-p1[1])/6;
+    d+=` C${cp1x},${cp1y} ${cp2x},${cp2y} ${p2[0]},${p2[1]}`;
+  }
+  return d;
+}
+
+function draw(){
+  const rRed=+document.getElementById('r-red').value;
+  const rNir=+document.getElementById('r-nir').value;
+  const rSwir=+document.getElementById('r-swir').value;
+  document.getElementById('v-red').textContent=rRed.toFixed(2);
+  document.getElementById('v-nir').textContent=rNir.toFixed(2);
+  document.getElementById('v-swir').textContent=rSwir.toFixed(2);
+
+  const frac=(lambdas.nir-lambdas.red)/(lambdas.swir-lambdas.red);
+  const rNirBase=rRed+(rSwir-rRed)*frac;
+  const fai=rNir-rNirBase;
+
+  const allVals=[rRed,rNir,rSwir,rNirBase];
+  const yMin=Math.max(0,Math.min(...allVals)-0.04);
+  const yMax=Math.max(...allVals)+0.06;
+
+  const svg=document.getElementById('chart');
+  svg.innerHTML='';
+
+  const borderClr=clr('#ddd','#333');
+  const gridClr=clr('#eee','#2a2a2a');
+  const textClr=clr('#aaa','#555');
+
+  // grid
+  for(let r=0;r<=0.40;r+=0.05){
+    if(r<yMin-0.01||r>yMax+0.01)continue;
+    const y=yPx(r,yMin,yMax);
+    svg.appendChild(el('line',{x1:PAD.l,y1:y,x2:W-PAD.r,y2:y,stroke:gridClr,'stroke-width':'0.5','stroke-dasharray':'3 3'}));
+    svg.appendChild(txt(r.toFixed(2),{x:PAD.l-6,y:y+4,'text-anchor':'end','font-size':'10',fill:textClr}));
+  }
+  [600,700,800,900,1000,1200,1400,1600].forEach(lam=>{
+    const x=p(lam);
+    svg.appendChild(el('line',{x1:x,y1:PAD.t,x2:x,y2:H-PAD.b,stroke:gridClr,'stroke-width':'0.5','stroke-dasharray':'3 3'}));
+    svg.appendChild(txt(lam+'nm',{x,y:H-PAD.b+14,'text-anchor':'middle','font-size':'9',fill:textClr}));
+  });
+  svg.appendChild(el('line',{x1:PAD.l,y1:PAD.t,x2:PAD.l,y2:H-PAD.b,stroke:borderClr,'stroke-width':'0.5'}));
+  svg.appendChild(el('line',{x1:PAD.l,y1:H-PAD.b,x2:W-PAD.r,y2:H-PAD.b,stroke:borderClr,'stroke-width':'0.5'}));
+
+  svg.appendChild(txt('Reflectancia R_rc',{x:13,y:PAD.t+CH/2,'text-anchor':'middle','font-size':'10',fill:textClr,transform:`rotate(-90,13,${PAD.t+CH/2})`}));
+  svg.appendChild(txt('Longitud de onda λ (nm)',{x:PAD.l+CW/2,y:H,'text-anchor':'middle','font-size':'10',fill:textClr}));
+
+  const xR=p(lambdas.red),xN=p(lambdas.nir),xS=p(lambdas.swir);
+  const yR=yPx(rRed,yMin,yMax),yNreal=yPx(rNir,yMin,yMax);
+  const yS=yPx(rSwir,yMin,yMax),yNbase=yPx(rNirBase,yMin,yMax);
+
+  // baseline line
+  svg.appendChild(el('line',{x1:xR,y1:yR,x2:xS,y2:yS,stroke:'#ea580c','stroke-width':'1.5','stroke-dasharray':'5 4'}));
+
+  // FAI shading
+  if(Math.abs(fai)>0.002){
+    const top=Math.min(yNreal,yNbase),bot=Math.max(yNreal,yNbase);
+    svg.appendChild(el('rect',{x:xN-4,y:top,width:8,height:bot-top,fill:fai>0?'rgba(22,163,74,0.18)':'rgba(220,38,38,0.18)',rx:2}));
+    svg.appendChild(el('line',{x1:xN,y1:top,x2:xN,y2:bot,stroke:'#16a34a','stroke-width':'2','stroke-dasharray':'3 2'}));
+    const midY=(top+bot)/2;
+    svg.appendChild(el('rect',{x:xN+6,y:midY-8,width:56,height:16,fill:clr('#fff','#1a1a1a'),rx:3,opacity:'0.9'}));
+    svg.appendChild(txt('FAI='+fai.toFixed(3),{x:xN+10,y:midY+4,'font-size':'10',fill:'#16a34a','font-weight':'500'}));
+  }
+
+  // spectrum curve
+  const pts=[
+    [p(550),yPx(rRed*0.7,yMin,yMax)],
+    [xR,yR],
+    [p(730),yPx((rRed+rNir)/2*0.85,yMin,yMax)],
+    [xN,yNreal],
+    [p(1100),yPx((rNir+rSwir)/2*0.7,yMin,yMax)],
+    [xS,yS],
+    [p(1700),yPx(rSwir*0.9,yMin,yMax)],
+  ];
+  svg.appendChild(el('path',{d:catmull(pts),stroke:'#9333ea','stroke-width':'2',fill:'none'}));
+
+  // baseline circle
+  svg.appendChild(el('circle',{cx:xN,cy:yNbase,r:5,fill:'none',stroke:'#ea580c','stroke-width':'1.5','stroke-dasharray':'2 2'}));
+  svg.appendChild(txt("R_rc'(NIR)="+rNirBase.toFixed(3),{x:xN,y:yNbase+16,'text-anchor':'middle','font-size':'9.5',fill:'#ea580c'}));
+
+  // measured points
+  [[lambdas.red,rRed,'#dc2626','Rojo'],[lambdas.nir,rNir,'#9333ea','NIR'],[lambdas.swir,rSwir,'#4f46e5','SWIR']].forEach(([lam,r,c,name])=>{
+    const cx=p(lam),cy=yPx(r,yMin,yMax);
+    svg.appendChild(el('circle',{cx,cy,r:5,fill:c}));
+    svg.appendChild(txt(name,{x:cx,y:PAD.t-8,'text-anchor':'middle','font-size':'9.5',fill:c,'font-weight':'500'}));
+    svg.appendChild(el('line',{x1:cx,y1:PAD.t-4,x2:cx,y2:cy-5,stroke:c,'stroke-width':'0.5','stroke-dasharray':'2 2'}));
+  });
+
+  const faiEl=document.getElementById('fai-val');
+  faiEl.textContent=fai.toFixed(4);
+  faiEl.style.color=fai>0.005?'#16a34a':fai<-0.005?'#dc2626':'inherit';
+  const interp=document.getElementById('fai-interp');
+  if(fai>0.02)interp.textContent='FAI positivo alto → probable presencia de algas flotantes o cianobacterias';
+  else if(fai>0.005)interp.textContent='FAI positivo leve → posible vegetación acuática o algas dispersas';
+  else if(fai>-0.005)interp.textContent='FAI ≈ 0 → agua limpia, el NIR está en la línea base esperada';
+  else interp.textContent='FAI negativo → el NIR está por debajo de la línea base (poco habitual en agua)';
+}
+
+['r-red','r-nir','r-swir'].forEach(id=>document.getElementById(id).addEventListener('input',draw));
+draw();
+</script>
+</body>
+</html>
