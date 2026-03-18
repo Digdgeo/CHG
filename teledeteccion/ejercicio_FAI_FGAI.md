@@ -154,6 +154,83 @@ stats_s3  = zonal_stats("embalses.shp", "FGAI_S3.tif",  stats=["mean", "max", "s
 
 ---
 
+---
+
+## Máscara de agua: problema de la extensión máxima del embalse
+
+### El problema
+
+Los shapefiles de embalses suelen representar la **extensión máxima** de la lámina de agua, no el nivel real en la fecha de la imagen. En verano, con los embalses a menor capacidad, una parte del polígono cubre orilla seca, vegetación emergente o suelo desnudo. Estos píxeles no acuáticos presentan valores de FAI/FGAI elevados — no por presencia de algas, sino por la señal de vegetación o suelo — contaminando los resultados del análisis.
+
+**Solución:** aplicar una máscara de agua basada en el **MNDWI** para quedarse únicamente con los píxeles clasificados como agua antes de calcular las estadísticas zonales.
+
+---
+
+### Máscara de agua para Sentinel-2 (L1C y L2A)
+
+El **MNDWI (Modified Normalized Difference Water Index)** usa las bandas verde y SWIR:
+
+```
+MNDWI = (Green - SWIR) / (Green + SWIR)
+```
+
+- Valores **> 0** → agua
+- Valores **< 0** → suelo, vegetación, edificios
+
+#### Bandas por producto
+
+| Producto | Verde | SWIR |
+|----------|-------|------|
+| S2 L1C | B3 | B11 |
+| S2 L2A | B3 | B11 |
+
+#### En SNAP — Band Maths
+
+Primero calcular el MNDWI (asegurarse de que B3 y B11 están en el subset y remuestreadas a la misma resolución):
+
+```
+(B3 - B11) / (B3 + B11)
+```
+
+Luego crear la banda enmascarada del índice aplicando la condición:
+
+```
+MNDWI > 0 ? FGAI_L1C : NaN
+```
+
+Esto sustituye por NaN todos los píxeles no acuáticos, dejando solo los píxeles de agua para el análisis.
+
+---
+
+### Máscara de agua para Sentinel-3 OLCI
+
+OLCI **no dispone de banda SWIR**, por lo que el MNDWI no es aplicable directamente. La alternativa es el **NDWI (Normalized Difference Water Index)**:
+
+```
+NDWI = (Green - NIR) / (Green + NIR)
+```
+
+| Banda | OLCI | λ (nm) |
+|-------|------|--------|
+| Verde | Oa06 | 560 nm |
+| NIR   | Oa17 | 865 nm |
+
+#### En SNAP — Band Maths
+
+```
+(Oa06_reflectance - Oa17_reflectance) / (Oa06_reflectance + Oa17_reflectance)
+```
+
+Y la banda enmascarada:
+
+```
+NDWI > 0 ? FGAI_S3 : NaN
+```
+
+> **Nota:** El NDWI es menos preciso que el MNDWI para separar agua de suelo húmedo y vegetación densa, pero es la mejor opción disponible con las bandas de OLCI. En S3 el efecto de píxeles mixtos en orillas ya es importante por la resolución de 300 m, por lo que la máscara es especialmente importante.
+
+---
+
 ## Preguntas de análisis
 
 1. ¿Introduce la falta de corrección atmosférica errores significativos en la detección de floraciones? → comparar FGAI L1C vs FAI L2A
