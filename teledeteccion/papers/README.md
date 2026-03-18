@@ -100,11 +100,11 @@ Comparar el rendimiento del índice FGAI (sin corrección atmosférica) calculad
 
 ### Embalses candidatos
 
-| Embalse | Superficie (km²) | Motivo |
-|---------|-----------------|--------|
-| Iznájar (Córdoba) | ~38 km² | Eutrofización conocida; tamaño suficiente para S3 |
-| Encinarejo / Andújar | ~15 km² | Límite de viabilidad para S3 |
-| La Serena (Badajoz) | ~112 km² | El más grande de la cuenca; referencia ideal |
+| Embalse | Provincia |
+|---------|-----------|
+| Bornos | Cádiz |
+| Guadalcacín | Cádiz |
+| Torre del Águila | Sevilla |
 
 ### Diseño del ejercicio
 
