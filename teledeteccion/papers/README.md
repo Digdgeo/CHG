@@ -93,10 +93,43 @@ R_rc'(NIR) = R_rc(red) + [R_rc(SWIR) - R_rc(red)] × (λ_NIR - λ_red) / (λ_SWI
 
 ---
 
-## Propuesta de ejercicio: comparación FAI/FGAI en embalses del Guadalquivir
+## Apunte teórico: ¿cómo aplicar la corrección Rayleigh a Sentinel-2?
+
+Aunque para el ejercicio usaremos directamente los productos L1C y L2A, la corrección Rayleigh puede aplicarse como paso intermedio por tres vías:
+
+### 1. Con SNAP (interfaz gráfica)
+SNAP incluye el operador **Rayleigh Correction Processor**:
+- `Optical → Preprocessing → Rayleigh Correction`
+- Funciona directamente sobre el producto L1C
+- Genera bandas `rBRR` (Rayleigh-corrected Bottom of Rayleigh Reflectance) listas para calcular el FAI
+
+### 2. Con `esa_snappy` (Python)
+Llamando al mismo operador de SNAP desde Python:
+```python
+import esa_snappy
+from esa_snappy import ProductIO, GPF, HashMap
+
+product = ProductIO.readProduct("S2A_L1C.SAFE")
+params = HashMap()
+params.put('computeTaur', True)
+params.put('addAirMass', False)
+rc_product = GPF.createProduct('RayleighCorrection', params, product)
+```
+
+### 3. Con `py6s` (modelo de transferencia radiativa)
+`py6s` es un wrapper de Python para el modelo **6S** — permite calcular la corrección Rayleigh (y de aerosoles) de forma más rigurosa:
+```bash
+pip install Py6S
+```
+
+> **Nota:** Para nuestro contexto, la corrección Rayleigh como paso intermedio tiene poco sentido cuando el producto L2A ya está disponible gratuitamente en el Copernicus Data Space. Su interés es más histórico: el FAI original (Hu, 2009) fue diseñado para sensores oceanográficos (MODIS, SeaWiFS) donde los productos de reflectancia de superficie no siempre eran fiables en zonas costeras e interiores.
+
+---
+
+## Propuesta de ejercicio: comparación de índices en embalses del Guadalquivir
 
 ### Objetivo
-Comparar el rendimiento del índice FGAI (sin corrección atmosférica) calculado desde **Sentinel-2** (10 m) y **Sentinel-3 OLCI** (300 m) en embalses grandes de la cuenca del Guadalquivir, tomando el **FAI** calculado sobre Sentinel-2 corregido atmosféricamente como referencia.
+Evaluar el efecto del nivel de corrección atmosférica y la resolución espacial en la detección de floraciones, calculando los índices FAI/FGAI sobre tres fuentes de datos distintas y comparando los resultados.
 
 ### Embalses candidatos
 
@@ -108,12 +141,15 @@ Comparar el rendimiento del índice FGAI (sin corrección atmosférica) calculad
 
 ### Diseño del ejercicio
 
-1. **Imagen de referencia (Sentinel-2 L2A):** calcular el FAI original sobre reflectancia de superficie (ya corregida con Sen2Cor)
-2. **Sentinel-2 L1C (TOA):** calcular FGAI sobre la misma imagen sin corrección atmosférica → comparar con el FAI
-3. **Sentinel-3 OLCI (OL_1_EFR):** calcular FGAI a 300 m sobre R_TOA → comparar extensión y patrón espacial con el resultado de S2
-4. **Análisis de concordancia:** ¿coinciden las zonas de floración detectadas? ¿Qué píxeles de S3 son mixtos?
+Los tres escenarios se calculan sobre la misma fecha (o la más próxima disponible):
+
+| Escenario | Producto | Índice | Resolución | Corrección atmosférica |
+|-----------|----------|--------|------------|----------------------|
+| 1 | Sentinel-2 **L2A** | **FAI** (roja + NIR + SWIR) | 10 m | Completa (Sen2Cor) |
+| 2 | Sentinel-2 **L1C** | **FGAI** (azul + verde + roja + NIR) | 10 m | Ninguna (R_TOA) |
+| 3 | Sentinel-3 OLCI **OL_1_EFR** | **FGAI** (azul + verde + roja + NIR) | 300 m | Ninguna (R_TOA) |
 
 ### Preguntas de investigación
-- ¿Introduce la falta de corrección atmosférica errores significativos en la detección de floraciones?
-- ¿A partir de qué tamaño de embalse el FGAI de Sentinel-3 es comparable al de Sentinel-2?
-- ¿Puede usarse Sentinel-3 (mayor revisita) como sistema de alerta temprana y Sentinel-2 para confirmación espacial detallada?
+- ¿Introduce la falta de corrección atmosférica errores significativos en la detección de floraciones (comparar escenarios 1 y 2)?
+- ¿A partir de qué tamaño de embalse el FGAI de Sentinel-3 es comparable al de Sentinel-2 (escenario 3 vs 1/2)?
+- ¿Puede usarse Sentinel-3 (mayor revisita, ~2 días) como sistema de alerta temprana y Sentinel-2 (10 m) para confirmación espacial detallada?
