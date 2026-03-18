@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bandas espectrales Sentinel-2 y Sentinel-3</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:system-ui,-apple-system,sans-serif;background:#ffffff;color:#1a1a1a;padding:24px;max-width:960px;margin:0 auto}
+  @media(prefers-color-scheme:dark){body{background:#1a1a1a;color:#e5e5e5}}
+  h1{font-size:18px;font-weight:500;margin-bottom:4px}
+  .subtitle{font-size:13px;color:#666;margin-bottom:20px}
+  @media(prefers-color-scheme:dark){.subtitle{color:#999}}
+  .row-wrap{display:flex;align-items:flex-start;gap:8px;margin-bottom:5px}
+  .row-lbl{font-size:11px;font-weight:500;color:#888;width:72px;flex-shrink:0;padding-top:8px;text-align:right}
+  @media(prefers-color-scheme:dark){.row-lbl{color:#aaa}}
+  .track{position:relative;flex:1;height:28px}
+  .spec-track{position:relative;flex:1;height:8px;border-radius:3px;margin-top:4px}
+  .axis-track{position:relative;flex:1;height:20px}
+  .tick{position:absolute;font-size:9px;color:#aaa;transform:translateX(-50%);top:5px}
+  .tick::before{content:'';position:absolute;left:50%;top:-4px;width:1px;height:3px;background:#ccc}
+  @media(prefers-color-scheme:dark){.tick{color:#666}.tick::before{background:#444}}
+  .band{position:absolute;height:100%;border-radius:2px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:opacity .15s}
+  .band:hover{opacity:1!important;z-index:20;outline:1.5px solid rgba(255,255,255,0.5)}
+  .band span{font-size:8px;font-weight:500;color:#fff;white-space:nowrap;overflow:hidden;pointer-events:none;padding:0 1px}
+  .section-hdr{padding-left:80px;font-size:10px;color:#999;margin:10px 0 2px}
+  .detail{min-height:38px;padding:7px 10px;border-radius:8px;border:1px solid #e5e5e5;font-size:12px;color:#666;background:#f9f9f9;margin-top:10px}
+  @media(prefers-color-scheme:dark){.detail{border-color:#333;background:#222;color:#aaa}}
+  .detail strong{color:#1a1a1a;font-weight:500}
+  @media(prefers-color-scheme:dark){.detail strong{color:#e5e5e5}}
+  .reg-bar{position:absolute;height:100%;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:9px}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;padding-left:80px}
+  .legend-item{display:flex;align-items:center;gap:4px;font-size:10px;color:#888}
+  .legend-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+  footer{margin-top:20px;font-size:11px;color:#aaa;padding-top:12px;border-top:1px solid #eee}
+  @media(prefers-color-scheme:dark){footer{border-color:#333;color:#666}}
+</style>
+</head>
+<body>
+<h1>Bandas espectrales — Sentinel-2 MSI y Sentinel-3 OLCI/SLSTR</h1>
+<p class="subtitle">Pasa el ratón sobre cada banda para ver los detalles · ESA Copernicus Programme</p>
+<div id="viz"></div>
+<footer>
+  Fuentes: ESA Sentinel-2 MSI Technical Guide · ESA Sentinel-3 OLCI/SLSTR Technical Guide · Copernicus Open Access Hub<br>
+  Bandas térmicas de SLSTR (S7–S9, F1–F2: 3.7–12 μm) no mostradas por escala. Generado con HTML/JS vanilla.
+</footer>
+<script>
+const MIN=400,MAX=2500,RNG=MAX-MIN;
+function p(wl){return((wl-MIN)/RNG*100).toFixed(3)+'%'}
+function w(a,b){return((b-a)/RNG*100).toFixed(3)+'%'}
+function sc(wl){
+  if(wl<450)return`hsl(${280+(wl-380)/70*30},100%,55%)`;
+  if(wl<495)return`hsl(${240-(wl-450)/45*40},100%,55%)`;
+  if(wl<570)return`hsl(${200-(wl-495)/75*80},100%,45%)`;
+  if(wl<590)return`hsl(50,100%,50%)`;
+  if(wl<625)return`hsl(${30-(wl-590)/35*30},100%,50%)`;
+  if(wl<750)return`hsl(0,85%,${48-(wl-625)/125*18}%)`;
+  if(wl<1000)return`hsl(0,50%,${30-(wl-750)/250*15}%)`;
+  if(wl<1400)return`hsl(0,25%,${15-(wl-1000)/400*7}%)`;
+  return`hsl(220,15%,${12-(wl-1400)/1100*5}%)`;
+}
+function bc(wl){
+  if(wl<490)return'#3B82F6';
+  if(wl<570)return'#16A34A';
+  if(wl<680)return'#DC2626';
+  if(wl<780)return'#EA580C';
+  if(wl<1100)return'#9333EA';
+  if(wl<1700)return'#4F46E5';
+  return'#312E81';
+}
+const s2=[
+  {n:'B1',c:443,bw:20,r:'60m',d:'Aerosol costero'},
+  {n:'B2',c:490,bw:65,r:'10m',d:'Azul'},
+  {n:'B3',c:560,bw:35,r:'10m',d:'Verde'},
+  {n:'B4',c:665,bw:30,r:'10m',d:'Rojo'},
+  {n:'B5',c:705,bw:15,r:'20m',d:'Red Edge 1'},
+  {n:'B6',c:740,bw:15,r:'20m',d:'Red Edge 2'},
+  {n:'B7',c:783,bw:20,r:'20m',d:'Red Edge 3'},
+  {n:'B8',c:842,bw:115,r:'10m',d:'NIR amplio'},
+  {n:'B8A',c:865,bw:20,r:'20m',d:'NIR estrecho'},
+  {n:'B9',c:945,bw:20,r:'60m',d:'Vapor de agua'},
+  {n:'B10',c:1375,bw:30,r:'60m',d:'SWIR cirrus'},
+  {n:'B11',c:1610,bw:90,r:'20m',d:'SWIR 1'},
+  {n:'B12',c:2190,bw:180,r:'20m',d:'SWIR 2'},
+];
+const olci=[
+  {n:'Oa01',c:400,bw:15,d:'Aerosoles'},
+  {n:'Oa02',c:412.5,bw:10,d:'Sustancia amarilla'},
+  {n:'Oa03',c:442.5,bw:10,d:'Absorción Chl'},
+  {n:'Oa04',c:490,bw:10,d:'Chl alto'},
+  {n:'Oa05',c:510,bw:10,d:'Chl / sedimento'},
+  {n:'Oa06',c:560,bw:10,d:'Referencia Chl'},
+  {n:'Oa07',c:620,bw:10,d:'Carga sedimento'},
+  {n:'Oa08',c:665,bw:10,d:'2.º máx Chl'},
+  {n:'Oa09',c:673.75,bw:7.5,d:'Fluoresc. Chl'},
+  {n:'Oa10',c:681.25,bw:7.5,d:'Pico fluoresc. Chl'},
+  {n:'Oa11',c:708.75,bw:10,d:'Base fluoresc. Chl'},
+  {n:'Oa12',c:753.75,bw:7.5,d:'Ref. O₂ / aerosol'},
+  {n:'Oa13',c:761.25,bw:2.5,d:'Absorción O₂ A'},
+  {n:'Oa14',c:764.375,bw:3.75,d:'Absorción O₂'},
+  {n:'Oa15',c:767.5,bw:2.5,d:'Absorción O₂ B'},
+  {n:'Oa16',c:778.75,bw:15,d:'Corrección atm.'},
+  {n:'Oa17',c:865,bw:20,d:'Aerosol'},
+  {n:'Oa18',c:885,bw:10,d:'Ref. vapor agua'},
+  {n:'Oa19',c:900,bw:10,d:'Vapor de agua'},
+  {n:'Oa20',c:940,bw:20,d:'Abs. vapor agua'},
+  {n:'Oa21',c:1020,bw:40,d:'Fluoresc. Chl'},
+];
+const slstr=[
+  {n:'S1',c:554.27,bw:19.26,d:'Identif. nubes'},
+  {n:'S2',c:659.47,bw:19.25,d:'Vegetación'},
+  {n:'S3',c:868,bw:20,d:'Nieve / hielo'},
+  {n:'S4',c:1374.8,bw:20,d:'Cirros'},
+  {n:'S5',c:1613.4,bw:60,d:'Nubes / hielo'},
+  {n:'S6',c:2255.7,bw:50,d:'Vegetación / suelo'},
+];
+const viz=document.getElementById('viz');
+const det=document.createElement('div');det.className='detail';det.id='detail';
+det.textContent='Pasa el ratón sobre cualquier banda para ver los detalles';
+viz.appendChild(det);
+
+function mkRow(lbl,bands){
+  const wrap=document.createElement('div');wrap.className='row-wrap';
+  const l=document.createElement('div');l.className='row-lbl';l.textContent=lbl;wrap.appendChild(l);
+  const track=document.createElement('div');track.className='track';
+  bands.forEach(b=>{
+    const lo=b.c-b.bw/2,hi=b.c+b.bw/2;
+    if(lo>MAX||hi<MIN)return;
+    const div=document.createElement('div');div.className='band';
+    div.style.left=p(Math.max(lo,MIN));
+    div.style.width=w(Math.max(lo,MIN),Math.min(hi,MAX));
+    div.style.backgroundColor=bc(b.c);
+    div.style.opacity='0.82';
+    const sp=document.createElement('span');sp.textContent=b.n;div.appendChild(sp);
+    div.addEventListener('mouseenter',()=>{
+      det.innerHTML=`<strong>${b.n}</strong> — ${b.d} &nbsp;·&nbsp; Centro: <strong>${b.c} nm</strong> &nbsp;·&nbsp; Ancho banda: ${b.bw} nm${b.r?' &nbsp;·&nbsp; Resolución: <strong>'+b.r+'</strong>':''}`;
+      div.style.opacity='1';
+    });
+    div.addEventListener('mouseleave',()=>{
+      det.textContent='Pasa el ratón sobre cualquier banda para ver los detalles';
+      div.style.opacity='0.82';
+    });
+    track.appendChild(div);
+  });
+  wrap.appendChild(track);return wrap;
+}
+function mkSpec(){
+  const wrap=document.createElement('div');wrap.className='row-wrap';
+  const l=document.createElement('div');l.className='row-lbl';wrap.appendChild(l);
+  const s=document.createElement('div');s.className='spec-track';
+  const stops=[];
+  for(let wl=MIN;wl<=MAX;wl+=25)stops.push(`${sc(wl)} ${((wl-MIN)/RNG*100).toFixed(1)}%`);
+  s.style.background=`linear-gradient(to right,${stops.join(',')})`;
+  wrap.appendChild(s);return wrap;
+}
+function mkRegions(){
+  const wrap=document.createElement('div');wrap.className='row-wrap';wrap.style.marginBottom='2px';
+  const l=document.createElement('div');l.className='row-lbl';wrap.appendChild(l);
+  const bar=document.createElement('div');bar.style.flex='1';bar.style.position='relative';bar.style.height='14px';
+  [{n:'Visible',f:400,t:750,c:'rgba(120,160,255,0.18)'},{n:'NIR',f:750,t:1400,c:'rgba(200,80,80,0.12)'},{n:'SWIR',f:1400,t:2500,c:'rgba(90,70,200,0.13)'}].forEach(r=>{
+    const d=document.createElement('div');d.className='reg-bar';
+    d.style.left=p(r.f);d.style.width=w(r.f,r.t);d.style.background=r.c;
+    d.style.color='#999';d.style.fontSize='9px';
+    d.textContent=r.n;bar.appendChild(d);
+  });
+  wrap.appendChild(bar);return wrap;
+}
+function mkAxis(){
+  const wrap=document.createElement('div');wrap.className='row-wrap';
+  const l=document.createElement('div');l.className='row-lbl';wrap.appendChild(l);
+  const ax=document.createElement('div');ax.className='axis-track';
+  [400,500,600,700,800,900,1000,1200,1500,2000,2500].forEach(wl=>{
+    const t=document.createElement('div');t.className='tick';
+    t.textContent=wl<1000?wl+'nm':(wl/1000).toFixed(1)+'μm';
+    t.style.left=p(wl);ax.appendChild(t);
+  });
+  wrap.appendChild(ax);return wrap;
+}
+function hdr(txt){
+  const d=document.createElement('div');d.className='section-hdr';d.textContent=txt;return d;
+}
+
+viz.appendChild(mkRegions());
+viz.appendChild(mkSpec());
+viz.appendChild(hdr('Sentinel-2 MSI — 13 bandas'));
+viz.appendChild(mkRow('S2 MSI',s2));
+viz.appendChild(hdr('Sentinel-3 OLCI — 21 bandas (color océano/tierra)'));
+viz.appendChild(mkRow('S3 OLCI',olci));
+viz.appendChild(hdr('Sentinel-3 SLSTR — S1–S6 mostradas (S7–S9 son térmicas: 3.7–12 μm)'));
+viz.appendChild(mkRow('S3 SLSTR',slstr));
+viz.appendChild(mkAxis());
+
+const leg=document.createElement('div');leg.className='legend';
+[['#3B82F6','Azul (400–490)'],['#16A34A','Verde (490–570)'],['#DC2626','Rojo (570–680)'],['#EA580C','Red Edge (680–780)'],['#9333EA','NIR (780–1100)'],['#4F46E5','SWIR 1'],['#312E81','SWIR 2']].forEach(([c,n])=>{
+  const i=document.createElement('div');i.className='legend-item';
+  const s=document.createElement('div');s.className='legend-dot';s.style.background=c;
+  i.appendChild(s);i.appendChild(document.createTextNode(n));leg.appendChild(i);
+});
+viz.appendChild(leg);
+</script>
+</body>
+</html>
