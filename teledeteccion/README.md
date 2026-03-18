@@ -41,34 +41,35 @@ conda --version
 
 ### 3. Crear el entorno de trabajo para esa_snappy
 
-A partir de SNAP 10, el módulo de Python se llama **`esa_snappy`** (antes era `snappy`). Crear un entorno limpio de conda:
+A partir de SNAP 10, el módulo de Python se llama **`esa_snappy`** (antes era `snappy`). Crear un entorno limpio de conda **antes** de instalar SNAP:
 
 ```bash
 conda create -n esa_snappy python=3.10
-conda activate esa_snappy
 ```
 
-### 4. Configurar esa_snappy
+### 4. Configurar esa_snappy durante la instalación de SNAP
 
-Con el entorno activado, ejecutar el script de configuración que incluye SNAP, apuntando al ejecutable de Python del entorno:
+El instalador de SNAP 13 incluye un paso donde pide el path del entorno de Python. Basta con indicar la ruta del entorno creado en el paso anterior.
+
+La ruta del entorno suele ser:
 
 **Windows:**
-```bash
-& "C:\Program Files\snap\bin\snappy-conf.exe" "%CONDA_PREFIX%\python.exe"
+```
+C:\Users\<usuario>\anaconda3\envs\esa_snappy
 ```
 
 **Linux/Mac:**
-```bash
-~/snap/bin/snappy-conf $CONDA_PREFIX/bin/python
 ```
-
-Esto genera el módulo `esa_snappy` dentro del entorno e indica la ruta donde se ha instalado (por defecto `~/.snap/snap-python/esa_snappy`).
+~/anaconda3/envs/esa_snappy
+```
 
 ### 5. Verificar la instalación
 
-```python
-import esa_snappy
-print(esa_snappy.ProductIO)
+Activar el entorno y comprobar que el módulo carga correctamente:
+
+```bash
+conda activate esa_snappy
+python -c "import esa_snappy; print(esa_snappy.ProductIO)"
 ```
 
 Si no da error, la instalación es correcta.
