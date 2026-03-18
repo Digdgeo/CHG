@@ -89,4 +89,4 @@ Los plugins necesarios para esta clase están en la carpeta `plugins/`:
 > Ver hilo del foro: https://forum.step.esa.int/t/plugin-installation-problem-with-sen2res-and-others/44612
 
 ### Datos de prácticas
-Los datos utilizados en las prácticas se encuentran en la carpeta `datos/`.
+Los datos utilizados en las prácticas se encuentran en el saco del curso, en la carpeta `datos_dia3`.
