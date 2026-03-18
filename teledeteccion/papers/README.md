@@ -138,6 +138,7 @@ Evaluar el efecto del nivel de corrección atmosférica y la resolución espacia
 | Bornos | Cádiz |
 | Guadalcacín | Cádiz |
 | Torre del Águila | Sevilla |
+| Barbate | Cádiz |
 
 ### Diseño del ejercicio
 
