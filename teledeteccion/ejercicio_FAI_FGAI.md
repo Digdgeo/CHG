@@ -164,47 +164,38 @@ Los shapefiles de embalses suelen representar la **extensión máxima** de la l�
 
 **Solución:** aplicar una máscara de agua basada en el **MNDWI** para quedarse únicamente con los píxeles clasificados como agua antes de calcular las estadísticas zonales.
 
+La máscara se puede aplicar de dos formas:
+
 ---
 
-### Máscara de agua para Sentinel-2 (L1C y L2A)
+### Opción A — Directamente en SNAP (Band Maths)
 
-El **MNDWI (Modified Normalized Difference Water Index)** usa las bandas verde y SWIR:
+Lo más rápido si ya tienes el índice calculado en el mismo producto. No requiere crear una máscara binaria separada.
+
+#### Sentinel-2 (L1C y L2A)
+
+El **MNDWI** usa las bandas verde y SWIR:
 
 ```
 MNDWI = (Green - SWIR) / (Green + SWIR)
 ```
-
-- Valores **> 0** → agua
-- Valores **< 0** → suelo, vegetación, edificios
-
-#### Bandas por producto
 
 | Producto | Verde | SWIR |
 |----------|-------|------|
 | S2 L1C | B3 | B11 |
 | S2 L2A | B3 | B11 |
 
-#### En SNAP — Band Maths
-
-Primero calcular el MNDWI (asegurarse de que B3 y B11 están en el subset y remuestreadas a la misma resolución):
+Asegurarse de que B3 y B11 están en el subset y remuestreadas a la misma resolución. Calcular directamente la banda enmascarada:
 
 ```
-(B3 - B11) / (B3 + B11)
+(B3 - B11) / (B3 + B11) > 0 ? FGAI_L1C : NaN
 ```
 
-Luego crear la banda enmascarada del índice aplicando la condición:
+Esto sustituye por NaN todos los píxeles no acuáticos en un solo paso.
 
-```
-MNDWI > 0 ? FGAI_L1C : NaN
-```
+#### Sentinel-3 OLCI
 
-Esto sustituye por NaN todos los píxeles no acuáticos, dejando solo los píxeles de agua para el análisis.
-
----
-
-### Máscara de agua para Sentinel-3 OLCI
-
-OLCI **no dispone de banda SWIR**, por lo que el MNDWI no es aplicable directamente. La alternativa es el **NDWI (Normalized Difference Water Index)**:
+OLCI **no dispone de banda SWIR**, por lo que se usa el **NDWI**:
 
 ```
 NDWI = (Green - NIR) / (Green + NIR)
@@ -215,19 +206,39 @@ NDWI = (Green - NIR) / (Green + NIR)
 | Verde | Oa06 | 560 nm |
 | NIR   | Oa17 | 865 nm |
 
-#### En SNAP — Band Maths
+```
+(Oa06_reflectance - Oa17_reflectance) / (Oa06_reflectance + Oa17_reflectance) > 0 ? FGAI_S3 : NaN
+```
 
+> **Nota:** El NDWI es menos preciso que el MNDWI para separar agua de suelo húmedo y vegetación densa, pero es la mejor opción disponible con las bandas de OLCI.
+
+---
+
+### Opción B — Flujo SNAP + QGIS (dos pasos)
+
+Útil si ya has exportado los GeoTIFFs y quieres aplicar la máscara después.
+
+**Paso 1 — Calcular el MNDWI/NDWI en SNAP y exportar como GeoTIFF**
+
+Para S2:
+```
+(B3 - B11) / (B3 + B11)
+```
+
+Para S3:
 ```
 (Oa06_reflectance - Oa17_reflectance) / (Oa06_reflectance + Oa17_reflectance)
 ```
 
-Y la banda enmascarada:
+**Paso 2 — Aplicar la máscara en QGIS con la Calculadora Ráster**
 
 ```
-NDWI > 0 ? FGAI_S3 : NaN
+("FGAI_L1C@1" * ("MNDWI@1" > 0))
 ```
 
-> **Nota:** El NDWI es menos preciso que el MNDWI para separar agua de suelo húmedo y vegetación densa, pero es la mejor opción disponible con las bandas de OLCI. En S3 el efecto de píxeles mixtos en orillas ya es importante por la resolución de 300 m, por lo que la máscara es especialmente importante.
+Esto multiplica el FAI/FGAI por 1 donde hay agua y por 0 donde no. Después definir el valor **0 como NoData** en las propiedades del ráster resultante (`Propiedades → Transparencia → Valor NoData = 0`).
+
+> **Requisito:** los dos rásters deben tener la misma resolución y extensión. Si no coinciden, reproyectar o remuestrear previamente en QGIS (`Raster → Proyecciones → Reproyectar` / `Raster → Alineación de rásteres`).
 
 ---
 
