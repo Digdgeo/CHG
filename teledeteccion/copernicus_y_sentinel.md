@@ -169,14 +169,14 @@ Sentinel-6 continúa la serie histórica de altimetría oceánica comenzada por 
 
 ## Resumen comparativo
 
-| Satélite | Sensor | Resolución espacial | Revisita | Dominio principal |
-|----------|--------|-------------------|----------|------------------|
-| Sentinel-1 | SAR (banda C) | 5–20 m | 6 días (1 sat) | Tierra, Océano (todo tiempo) |
-| Sentinel-2 | Multiespectral óptico | 10–60 m | 5 días (2 sat) | Tierra |
-| Sentinel-3 | OLCI, SLSTR, SRAL | 300 m – 1 km | ~2 días | Océano, Tierra global |
-| Sentinel-4 | UVN (geoest.) | ~8 km | Continua (1h) | Atmósfera (Europa) |
-| Sentinel-5P | TROPOMI | 3,5 × 5,5 km | Diaria | Atmósfera (global) |
-| Sentinel-6 | Altímetro radar | ~300 m | 10 días | Nivel del mar |
+| Satélite | Inicio misión | Sensor | Resolución espacial | Revisita | Dominio principal |
+|----------|--------------|--------|-------------------|----------|------------------|
+| Sentinel-1 | 2014 | SAR (banda C) | 5–20 m | 6 días (1 sat) | Tierra, Océano (todo tiempo) |
+| Sentinel-2 | 2015 | Multiespectral óptico | 10–60 m | 5 días (2 sat) | Tierra |
+| Sentinel-3 | 2016 | OLCI, SLSTR, SRAL | 300 m – 1 km | ~2 días | Océano, Tierra global |
+| Sentinel-4 | En desarrollo | UVN (geoest.) | ~8 km | Continua (1h) | Atmósfera (Europa) |
+| Sentinel-5P | 2017 | TROPOMI | 3,5 × 5,5 km | Diaria | Atmósfera (global) |
+| Sentinel-6 | 2020 | Altímetro radar | ~300 m | 10 días | Nivel del mar |
 
 ---
 
