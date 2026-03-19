@@ -58,7 +58,7 @@ Los satélites Sentinel-1 utilizan radar de microondas, lo que les permite **obs
 | **Resolución** | 10, 20 y 60 m según la banda |
 | **Cobertura** | Global cada 5 días (con los dos satélites) |
 | **Órbita** | ~786 km, heliosíncrona |
-| **Satélites** | Sentinel-2A (2015), Sentinel-2B (2017) |
+| **Satélites** | Sentinel-2A (2015), Sentinel-2B (2017), Sentinel-2C (2024) |
 
 Sentinel-2 es el satélite de **referencia para la teledetección óptica terrestre** dentro de Copernicus. Sus 13 bandas espectrales cubren desde el visible hasta el infrarrojo de onda corta (SWIR), permitiendo calcular una gran variedad de índices de vegetación, agua y suelo.
 
