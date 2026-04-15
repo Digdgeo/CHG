@@ -2,18 +2,27 @@
 
 Módulo de Python aplicado a los Sistemas de Información Geográfica.
 
-## Clase 1 — Introducción y datos vectoriales
+## Día 1 — Introducción a Python
 
 ### Contenidos
 - Entorno de trabajo: Python, Jupyter y librerías geoespaciales
-- Introducción a `geopandas`: lectura, escritura y exploración de datos vectoriales
-- Sistemas de referencia de coordenadas con `pyproj`
-- Operaciones espaciales: reproyección, selección, dissolve, buffer
-- Visualización básica con `matplotlib`
+- Introducción a Python: tipos de datos, estructuras de control, funciones
+- Clases y programación orientada a objetos
+- Manejo de datos tabulares con `pandas`
 
 ---
 
-## Clase 2 — Datos raster
+## Día 2 — Datos vectoriales y nubes de puntos
+
+### Contenidos
+- Introducción a `geopandas`: lectura, escritura y exploración de datos vectoriales
+- Sistemas de referencia de coordenadas con `pyproj`
+- Operaciones espaciales: reproyección, selección, dissolve, buffer
+- Nubes de puntos LiDAR con `laspy` y `open3d`
+
+---
+
+## Día 3 — Datos raster
 
 ### Contenidos
 - Introducción a `rasterio`: lectura y escritura de rasters
@@ -23,13 +32,13 @@ Módulo de Python aplicado a los Sistemas de Información Geográfica.
 
 ---
 
-## Clase 3 — Análisis y visualización avanzada
+## Día 4 — Análisis de imágenes Landsat
 
 ### Contenidos
-- Visualización interactiva con `folium` y `leafmap`
-- Análisis espacial avanzado con `geopandas` y `shapely`
-- Flujo de trabajo completo: caso práctico aplicado a la cuenca del Guadalquivir
-- Exportación de resultados y generación de mapas
+- Acceso y descarga de imágenes Landsat
+- Cálculo de índices espectrales (NDVI, NDWI, etc.)
+- Análisis multitemporal con series de imágenes Landsat
+- Visualización y exportación de resultados
 
 ---
 
@@ -44,4 +53,4 @@ conda install -c conda-forge geopandas rasterio rasterstats matplotlib folium le
 ```
 
 ### Datos de prácticas
-Los datos utilizados en las prácticas se encuentran en las carpetas `clase1/datos/`, `clase2/datos/` y `clase3/datos/`.
+Los datos utilizados en las prácticas se encuentran en las carpetas correspondientes a cada día.
