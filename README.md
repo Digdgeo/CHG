@@ -40,6 +40,14 @@ Análisis geoespacial a gran escala en la plataforma en la nube de Google Earth 
 
 ---
 
+## Grabaciones de las sesiones
+
+| Sesión | Módulo | Grabación |
+|--------|--------|-----------|
+| Día 1 — Introducción a Python y Google Colab | GeoPython | [Ver grabación](https://balanbbb.corp.csic.es/playback/presentation/2.3/9c1fcab3d9c54cf2d3fc7fc7ae78cf6a60b5ec96-1776322640324) |
+
+---
+
 ## Requisitos
 
 - SNAP (Sentinel Application Platform): https://step.esa.int/main/download/snap-download/
