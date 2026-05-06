@@ -1,0 +1,38 @@
+name: geopython_chg
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  # Python y entorno Jupyter
+  - python=3.11
+  - jupyter
+  - jupyterlab
+  - notebook
+  - ipykernel
+
+  # Datos tabulares y cálculo
+  - numpy>=1.26
+  - pandas>=2.0
+  - scipy
+
+  # Visualización
+  - matplotlib>=3.8
+  - folium              # mapas interactivos (.explore() de GeoPandas)
+  - mapclassify         # clasificación coropletas (quantiles, natural breaks, etc.)
+  - contextily          # teselas de fondo (OpenStreetMap, CartoDB, etc.)
+
+  # Stack vectorial
+  - gdal>=3.7
+  - pyproj>=3.6
+  - shapely>=2.0
+  - fiona>=1.9
+  - geopandas>=1.0
+
+  # Stack raster
+  - rasterio>=1.3
+  - rasterstats         # estadísticas zonales raster-vector
+
+  # Nubes de puntos LiDAR (Día 2 LiDAR)
+  - pip
+  - pip:
+    - laspy[lazrs]      # lectura/escritura LAS/LAZ

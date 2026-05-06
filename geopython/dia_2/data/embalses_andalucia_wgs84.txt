@@ -1,0 +1,148 @@
+# Centroides de embalses de Andalucía — WGS84 (EPSG:4326)
+# Fuente: OpenStreetMap contributors (Overpass API)
+# Formato: nombre;latitud;longitud
+Embalse Arenoso;38.06301;-4.41999
+Embalse Derivación del Bembézar;37.86294;-5.22559
+Embalse Gargantafría;37.78304;-5.92720
+Embalse Matillas;37.58140;-5.35911
+Embalse Monte Félix-Toril;37.78750;-6.79832
+Embalse Superior Taja de la Encantada;36.90286;-4.77730
+Embalse Tajo de la Encantada;36.91024;-4.76754
+Embalse Torre del Águila;37.03791;-5.72828
+Embalse Zahariche;37.59491;-5.47590
+Embalse de Aguascebas;38.04480;-2.94826
+Embalse de Alfonso XIII;38.21462;-1.60589
+Embalse de Almodóvar;36.15462;-5.64113
+Embalse de Aracena;37.93098;-6.47800
+Embalse de Arcos;36.76262;-5.78772
+Embalse de Barbate;36.39432;-5.69500
+Embalse de Beas;37.46956;-6.76395
+Embalse de Beninar;36.88793;-3.02765
+Embalse de Bornos;36.81604;-5.71737
+Embalse de Béznar;36.92219;-3.55576
+Embalse de Cala;37.72921;-6.11564
+Embalse de Camarillas;38.36121;-1.63810
+Embalse de Campanario;37.52902;-6.83249
+Embalse de Canales;37.15600;-3.45740
+Embalse de Cantillana;37.61208;-5.75276
+Embalse de Casasola;36.81413;-4.49647
+Embalse de Castilblanco de los Arroyos;37.67519;-6.04273
+Embalse de Castilseras;38.74358;-4.78799
+Embalse de Charco Redondo;36.24858;-5.55801
+Embalse de Colomera;37.41407;-3.70945
+Embalse de Cordobilla;37.35453;-4.71819
+Embalse de Coto Alto;36.68944;-5.19700
+Embalse de Cuevas del Almanzora;37.34007;-1.91506
+Embalse de Cumbres de San Bartolomé;38.06938;-6.75704
+Embalse de El Encinarejo;38.19191;-3.98850
+Embalse de El Limonero;36.76628;-4.43340
+Embalse de El Pintado;37.91723;-5.93464
+Embalse de El Portillo;37.82111;-2.78782
+Embalse de El Tomillar;36.75823;-4.56729
+Embalse de Francisco Abellán;37.30331;-3.27758
+Embalse de Guadaiza;36.53965;-4.99710
+Embalse de Guadalcacín;36.64875;-5.70980
+Embalse de Guadarranque;36.32167;-5.47353
+Embalse de Isfalada;37.15643;-2.95620
+Embalse de Iznájar;37.26785;-4.29450
+Embalse de José Torán;37.76559;-5.47316
+Embalse de La Jarilla;38.73317;-3.19230
+Embalse de Los Barrancos Altos;36.54563;-6.05206
+Embalse de Los Hurones;36.69361;-5.52403
+Embalse de Marisánchez - La Cabezuela;38.71119;-3.25084
+Embalse de Martin Gonzalo;38.10509;-4.33109
+Embalse de Montejaque;36.75189;-5.24469
+Embalse de Montoro I;38.54523;-4.12700
+Embalse de Montoro II;38.53330;-4.14312
+Embalse de Navera;36.37536;-5.95715
+Embalse de Nerva;37.71037;-6.47683
+Embalse de Piedra Aguda;38.66873;-7.02833
+Embalse de Puente Nuevo;38.13880;-4.97817
+Embalse de Puerto León;37.71964;-6.83982
+Embalse de Quéntar;37.21063;-3.43239
+Embalse de Rules;36.87462;-3.47649
+Embalse de San Clemente;37.86837;-2.64759
+Embalse de San Pedro;38.29235;-5.34021
+Embalse de San Rafael de Navallana;37.99142;-4.64599
+Embalse de San Walabonso;37.45841;-6.71719
+Embalse de Sierra Boyera;38.27406;-5.27061
+Embalse de Sotiel;37.73865;-6.81343
+Embalse de Tablillas;38.56223;-4.17564
+Embalse de Tranco de Beas;38.14456;-2.77402
+Embalse de Tumbanales I;37.73375;-6.55885
+Embalse de Tumbanales II;37.72840;-6.56188
+Embalse de Vadomojón;37.61554;-4.19444
+Embalse de Zahara;36.83263;-5.36259
+Embalse de Zocueca;38.10473;-3.83260
+Embalse de Zufre;37.82952;-6.32177
+Embalse de la Breña;37.87962;-5.02149
+Embalse de la Buitrera;36.58079;-5.33568
+Embalse de la Cancelada del Taraje;36.47155;-5.05399
+Embalse de la Concepcion;36.55760;-4.96244
+Embalse de la Cueva de La Mora;37.79309;-6.83420
+Embalse de la Fernandina;38.22860;-3.54712
+Embalse de la Garganta del Prior;36.15595;-5.49518
+Embalse de la Gitana;37.59747;-5.54409
+Embalse de la Joya;37.75341;-7.02584
+Embalse de la Laguna de las Yeguas;37.05648;-3.38063
+Embalse de la Marismilla;37.69496;-6.55881
+Embalse de la Minilla;37.68031;-6.19755
+Embalse de la Nava Nueva;36.38870;-6.03186
+Embalse de la Puebla de Cazalla;37.11701;-5.22078
+Embalse de la Serena;38.87419;-5.19849
+Embalse de la Zagaleta;36.54190;-5.03781
+Embalse de las Huertas de Soria;37.98495;-5.03825
+Embalse de las Medranas;36.49211;-5.00372
+Embalse de las Tejoneras;38.26748;-4.28131
+Embalse de las Yeguas;38.09760;-4.21904
+Embalse de los Azufaifos;37.62634;-6.23860
+Embalse de los Barrancos Bajos;36.55157;-6.05009
+Embalse de los Bermejales;36.97419;-3.88084
+Embalse de los Cárcavos;38.54023;-2.13099
+Embalse de los Melonares;37.77504;-5.89218
+Embalse del Agrio;37.53928;-6.29051
+Embalse del Agujero;36.77599;-4.43093
+Embalse del Alisal;37.78409;-6.76530
+Embalse del Arroyo del Fresnillo;36.76570;-5.37142
+Embalse del Bembézar;37.95139;-5.27640
+Embalse del Cabrahigo;36.31168;-5.87648
+Embalse del Calabazar;37.60742;-6.87362
+Embalse del Celemín;36.30825;-5.75101
+Embalse del Conde del Guadalhorce;36.91424;-4.81977
+Embalse del Corumbel bajo;37.44223;-6.55687
+Embalse del Cubillas;37.27594;-3.67205
+Embalse del Culebrín;37.97820;-6.19802
+Embalse del Esparragal;37.55498;-6.11778
+Embalse del Gaitanejo;36.93364;-4.79307
+Embalse del Gergal;37.60198;-6.04771
+Embalse del Giribaile;38.10325;-3.42722
+Embalse del Guadalhorce-Guadalteba;36.97227;-4.81330
+Embalse del Guadalmellato;38.07199;-4.68837
+Embalse del Guadalmena;38.41579;-2.89769
+Embalse del Guadalmina;36.53196;-5.04739
+Embalse del Guadalén;38.19936;-3.46790
+Embalse del Huesna;37.80366;-5.68802
+Embalse del Jandula;38.28841;-3.94452
+Embalse del Jarrama;37.67278;-6.50192
+Embalse del Milagro;36.30300;-5.86639
+Embalse del Negratín;37.58683;-2.87505
+Embalse del Obispo;36.36873;-6.03330
+Embalse del Odiel-Perejil;37.79212;-6.61143
+Embalse del Puente de la Cerrada;37.96246;-3.18781
+Embalse del Quiebrajano;37.62655;-3.71455
+Embalse del Retortillo;37.85399;-5.36899
+Embalse del Salado;36.54503;-6.01338
+Embalse del Sancho;37.47236;-7.02979
+Embalse del Sotillo;37.94181;-5.78138
+Embalse del Tamujoso;37.72987;-6.89254
+Embalse del Villar;38.22182;-4.30037
+Embalse del Víboras;37.63567;-3.99451
+Pantano Nuevo del Angel;36.52224;-4.96543
+Pantano de Carboneras;38.64129;-4.28569
+Pantano de La Viñuela;36.88348;-4.17472
+Pantano de Navalavaca y Almagreros;38.58449;-3.25948
+Pantano de Valtravieso;38.59579;-4.78628
+Pantano de la Leche;36.50641;-5.02854
+Pantano de las Buitreras;38.21163;-4.17454
+Pantano del Palomar;38.63744;-2.64711
+Pantano del Rumblar;38.19373;-3.77599
