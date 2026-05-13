@@ -28,21 +28,15 @@ El notebook **03b** trabaja con un GeoTIFF multibanda `landsat_donana_marisma.ti
 
 ## Ejecución en Google Colab
 
-El notebook **03b** detecta automáticamente si se ejecuta en Colab y descarga los datos desde Nextcloud. **Antes de la clase hay que rellenar las URL `NEXTCLOUD_…`** en la primera celda con los enlaces compartidos públicos de:
+El notebook **03b** descarga automáticamente todos los datos desde el propio repo:
 
-- `landsat_donana_marisma.tif` — imagen Landsat 7 bandas (~60 MB)
-- `terminos_municipales_andalucia.gpkg`
-- `cuencas_guadalquivir.gpkg`
-- `embalses_guadalquivir.gpkg`
+- **`landsat_donana_marisma.tif`** (~60 MB) — desde un [GitHub Release](https://github.com/Digdgeo/CHG/releases/tag/dia3-landsat-donana)
+- **Vectoriales `.gpkg`** — desde `raw.githubusercontent.com` (los mismos que están versionados en `dia_2/data/`)
 
-> El shape `rbios.shp` (Reserva de la Biosfera) **no hace falta subirlo a Nextcloud**: se usó solo para preparar el recorte de la escena (script `_make_recorte.py`, apéndice del notebook). El recorte ya viene hecho.
+Cero credenciales, cero URLs que rellenar — funciona en cuanto abres el notebook en Colab.
 
-Para que `wget` descargue directamente, el enlace de Nextcloud debe terminar en `/download`:
-
-```
-https://nextcloud.tu-dominio.es/s/TOKEN_DEL_ENLACE/download
-```
-
+> El shape `rbios.shp` (Reserva de la Biosfera) **no se descarga**: se usó solo para preparar el recorte de la escena (script `_make_recorte.py`, apéndice del notebook). El recorte ya viene hecho.
+>
 > El **03a** no necesita datos externos — funciona en Colab sin más.
 
 ## Abrir directamente en Colab
