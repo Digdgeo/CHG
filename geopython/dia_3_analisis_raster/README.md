@@ -30,11 +30,12 @@ El notebook **03b** trabaja con un GeoTIFF multibanda `landsat_donana_marisma.ti
 
 El notebook **03b** detecta automáticamente si se ejecuta en Colab y descarga los datos desde Nextcloud. **Antes de la clase hay que rellenar las URL `NEXTCLOUD_…`** en la primera celda con los enlaces compartidos públicos de:
 
-- `landsat_donana_marisma.tif` — imagen Landsat 7 bandas
+- `landsat_donana_marisma.tif` — imagen Landsat 7 bandas (~60 MB)
 - `terminos_municipales_andalucia.gpkg`
 - `cuencas_guadalquivir.gpkg`
 - `embalses_guadalquivir.gpkg`
-- `rbios.zip` — los 4 ficheros del shapefile (`.shp`, `.shx`, `.dbf`, `.prj`) zipeados
+
+> El shape `rbios.shp` (Reserva de la Biosfera) **no hace falta subirlo a Nextcloud**: se usó solo para preparar el recorte de la escena (script `_make_recorte.py`, apéndice del notebook). El recorte ya viene hecho.
 
 Para que `wget` descargue directamente, el enlace de Nextcloud debe terminar en `/download`:
 
