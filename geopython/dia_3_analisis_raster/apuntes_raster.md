@@ -122,24 +122,28 @@ Las nubes saturan el NDVI a ~0 y las sombras lo bajan artificialmente. **Antes d
 
 | Sensor | Banda de calidad | Cómo se interpreta |
 |--------|------------------|--------------------|
-| Landsat 8/9 C2 L2 | `QA_PIXEL` (uint16) | Bits empaquetados — ver tabla abajo |
+| Landsat 8/9 C2 L2 | `QA_PIXEL` (uint16) | Códigos enteros (21824, 21952…) — ver abajo |
 | Sentinel-2 L2A    | `SCL` (uint8)       | Códigos 0–11 (4=veg, 5=suelo, 6=agua, 8/9=nube, 3=sombra) |
 | MODIS, VIIRS      | `QA` o `state_1km`  | Bits propios de cada producto |
 
-**Decodificación bit a bit de `QA_PIXEL` Landsat C2** (lo que se hace en el notebook 03b):
+**Filtro práctico para Landsat 8/9 C2** — los códigos que nos importan en una escena típica:
+
+| Código | Significado |
+|--------|--------------|
+| 21824  | terreno claro |
+| 21952  | agua clara   |
+| 22280  | nube         |
+| 23888  | sombra de nube |
+| 55052  | nube + cirrus |
+| 56660  | sombra + cirrus |
 
 ```python
-qa = src.read(7).astype('int32')              # nuestra banda QA en el TIF de Doñana
-is_cloud        = ((qa >> 3) & 1).astype(bool)
-is_cloud_shadow = ((qa >> 4) & 1).astype(bool)
-is_cirrus       = ((qa >> 2) & 1).astype(bool)
-is_dilated      = ((qa >> 1) & 1).astype(bool)
-
-pixel_bueno = ~(is_cloud | is_cloud_shadow | is_cirrus | is_dilated)
+qa = src.read(7).astype('int32')
+pixel_bueno = (qa == 21824) | (qa == 21952)   # terreno claro o agua clara
 ndvi_limpio = np.where(pixel_bueno, ndvi, np.nan)
 ```
 
-`>> N` corre los bits N posiciones a la derecha; `& 1` se queda con el bit más bajo → es la forma estándar de extraer una flag empaquetada en un entero.
+> **De dónde salen estos números** (lectura avanzada, no imprescindible): USGS empaqueta varias condiciones (nube, sombra, cirrus, agua, nieve, confianzas…) en los **bits** de un entero de 16 bits. Cada valor es la suma de bits encendidos: `21824 = 0101010101000000₂` significa "clear=1, low confidence en nube/sombra/snow/cirrus". Si quieres extraer una flag concreta (p. ej. "es nube") sin enumerar todos los valores, se hace con desplazamiento de bits: `is_cloud = (qa >> 3) & 1`. La operación `>> N` corre los bits N posiciones a la derecha y `& 1` se queda con el bit más bajo. Es la forma canónica de "extraer una flag" empaquetada en un entero. Para una escena concreta basta con filtrar por igualdad como arriba.
 
 ---
 
