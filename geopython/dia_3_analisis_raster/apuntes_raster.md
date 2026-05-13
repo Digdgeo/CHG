@@ -116,6 +116,31 @@ with np.errstate(divide='ignore', invalid='ignore'):
 
 > **Truco mnemotécnico:** los índices "ND…" se construyen con `(A − B) / (A + B)`. Es la forma normalizada estándar. La fórmula resta el "fondo" y suma para acotar al rango \[-1, 1\].
 
+### Filtrado de nubes y sombras antes de calcular índices
+
+Las nubes saturan el NDVI a ~0 y las sombras lo bajan artificialmente. **Antes de calcular índices o estadísticas zonales sobre datos reales, filtra siempre por la máscara de calidad** que viene con cada producto:
+
+| Sensor | Banda de calidad | Cómo se interpreta |
+|--------|------------------|--------------------|
+| Landsat 8/9 C2 L2 | `QA_PIXEL` (uint16) | Bits empaquetados — ver tabla abajo |
+| Sentinel-2 L2A    | `SCL` (uint8)       | Códigos 0–11 (4=veg, 5=suelo, 6=agua, 8/9=nube, 3=sombra) |
+| MODIS, VIIRS      | `QA` o `state_1km`  | Bits propios de cada producto |
+
+**Decodificación bit a bit de `QA_PIXEL` Landsat C2** (lo que se hace en el notebook 03b):
+
+```python
+qa = src.read(7).astype('int32')              # nuestra banda QA en el TIF de Doñana
+is_cloud        = ((qa >> 3) & 1).astype(bool)
+is_cloud_shadow = ((qa >> 4) & 1).astype(bool)
+is_cirrus       = ((qa >> 2) & 1).astype(bool)
+is_dilated      = ((qa >> 1) & 1).astype(bool)
+
+pixel_bueno = ~(is_cloud | is_cloud_shadow | is_cirrus | is_dilated)
+ndvi_limpio = np.where(pixel_bueno, ndvi, np.nan)
+```
+
+`>> N` corre los bits N posiciones a la derecha; `& 1` se queda con el bit más bajo → es la forma estándar de extraer una flag empaquetada en un entero.
+
 ---
 
 ## 6. Bandas Landsat 8/9 y Sentinel-2 — equivalencias

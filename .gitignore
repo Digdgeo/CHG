@@ -4,7 +4,20 @@
 # Scripts internos de generación (no versionados)
 **/_build_notebooks.py
 **/_gen_synth.py
+**/_make_recorte.py
 **/_test_*.py
+
+# Escenas Landsat completas y derivados grandes — fuera del repo
+20250327l9oli202_34/
+**/landsat_donana_marisma.tif
+**/landsat_donana.tif
+
+# Artefactos que generan los notebooks al ejecutarse (NDVI, recortes, etc.)
+geopython/dia_3_analisis_raster/data/
+geopython/dia_3_analisis_raster/ndvi_donana.tif
+geopython/dia_3_analisis_raster/landsat_almonte.tif
+geopython/dia_3_analisis_raster/cuerpos_agua_donana.gpkg
+geopython/dia_3_analisis_raster/solo_nir.tif
 
 # Python
 __pycache__/
