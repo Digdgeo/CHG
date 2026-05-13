@@ -1,0 +1,18 @@
+# Notebook checkpoints
+**/.ipynb_checkpoints/
+
+# Scripts internos de generación (no versionados)
+**/_build_notebooks.py
+**/_gen_synth.py
+**/_test_*.py
+
+# Python
+__pycache__/
+*.pyc
+
+# SQLite WAL/SHM auxiliares (gpkg)
+*.gpkg-shm
+*.gpkg-wal
+
+# Sistema
+.DS_Store
