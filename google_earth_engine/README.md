@@ -10,14 +10,18 @@ Módulo de análisis geoespacial a gran escala con la plataforma Google Earth En
 
 ## Clase 1 — Introducción a GEE
 
+**Carpeta:** [`dia1_intro_gee/`](./dia1_intro_gee/)
+
 ### Contenidos
 - ¿Qué es Google Earth Engine? Arquitectura y capacidades
 - El Code Editor: interfaz, JavaScript API
+- Concepto cliente vs servidor
+- Geometrías, `Feature` y `FeatureCollection`
 - Colecciones de imágenes: `ImageCollection` e `Image`
 - Filtrado por fecha, región y metadatos
 - Visualización de imágenes en el mapa
-- Índices espectrales: NDVI, NDWI, NBR
-- Exportación de resultados a Google Drive
+- Índices espectrales: NDVI, NDWI, EVI
+- Primeros pasos con la API de Python (`geemap`)
 
 ---
 
@@ -52,5 +56,5 @@ Módulo de análisis geoespacial a gran escala con la plataforma Google Earth En
 
 ---
 
-### Datos de prácticas
-Los scripts y notebooks de cada clase se encuentran en `clase1/`, `clase2/` y `clase3/`.
+### Material de prácticas
+Los scripts y notebooks de cada clase se encuentran en sus carpetas: `dia1_intro_gee/` (y las de las clases 2 y 3, según avance el curso).
