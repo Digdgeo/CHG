@@ -45,6 +45,9 @@ Análisis geoespacial a gran escala en la plataforma en la nube de Google Earth 
 | Sesión | Módulo | Grabación |
 |--------|--------|-----------|
 | Día 1 — Introducción a Python y Google Colab | GeoPython | [Ver grabación](https://balanbbb.corp.csic.es/playback/presentation/2.3/9c1fcab3d9c54cf2d3fc7fc7ae78cf6a60b5ec96-1776322640324) |
+| Día 2 — Análisis de nubes de puntos | GeoPython | [Ver grabación](https://balanbbb.corp.csic.es/playback/presentation/2.3/9c1fcab3d9c54cf2d3fc7fc7ae78cf6a60b5ec96-1777532289932) |
+| Día 3 — Análisis vectorial | GeoPython | [Ver grabación](https://balanbbb.corp.csic.es/playback/presentation/2.3/9c1fcab3d9c54cf2d3fc7fc7ae78cf6a60b5ec96-1778136351239) |
+| Día 5 — Introducción a GEE y Code Editor | Google Earth Engine | [Ver grabación](https://balanbbb.corp.csic.es/playback/presentation/2.3/9c1fcab3d9c54cf2d3fc7fc7ae78cf6a60b5ec96-1779346693290) |
 
 ---
 
